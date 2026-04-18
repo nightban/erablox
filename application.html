@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000008; /* Очень глубокий синий, почти черный */
+            color: white;
+            font-family: 'Montserrat', sans-serif; /* Аналог Gotham SSm */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+        }
+
+        /* Иконка меню как на твоем скрине */
+        .menu-icon {
+            align-self: flex-start;
+            margin-bottom: 20px;
+            border: 3px solid white;
+            border-radius: 12px;
+            padding: 8px;
+            cursor: pointer;
+        }
+        .bar { width: 35px; height: 5px; background: white; margin: 6px; border-radius: 2px; }
+
+        h1 { 
+            font-size: 52px; 
+            margin: 10px 0; 
+            font-weight: 500; 
+            letter-spacing: -1px;
+        }
+        
+        .label { 
+            font-size: 22px; 
+            text-align: center; 
+            margin-top: 35px; 
+            max-width: 320px;
+            line-height: 1.2;
+        }
+        
+        input {
+            width: 100%;
+            max-width: 320px;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            margin-top: 12px;
+            font-size: 18px;
+            font-family: 'Montserrat', sans-serif;
+            color: #333;
+        }
+
+        /* Голубой блок с текстом */
+        .blue-box {
+            background-color: #5db3d5;
+            color: white;
+            width: 100%;
+            max-width: 320px;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 24px;
+            text-align: left;
+            box-sizing: border-box;
+            line-height: 1.3;
+        }
+
+        /* Большая зеленая кнопка */
+        .send-btn {
+            background-color: #a1cf9a; /* Светло-зеленый как на фото */
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            max-width: 320px;
+            border-radius: 12px;
+            font-size: 50px; /* Очень крупный текст */
+            margin-top: 25px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            transition: 0.2s;
+        }
+
+        .send-btn:active {
+            transform: scale(0.98);
+            filter: brightness(0.9);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="menu-icon">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+
+    <h1>Application</h1>
+
+    <div class="label">enter information of yourself (dont enter years, email)</div>
+    <input type="text" placeholder="4000 characters only">
+
+    <div class="label">enter link of your profile in roblox</div>
+    <input type="text">
+
+    <div class="label">enter this description in your roblox profile</div>
+    
+    <div class="blue-box">
+        erablox fly bird lava chicken
+    </div>
+
+    <button class="send-btn">send</button>
+
+    <script>
+        // Простая логика кнопки
+        document.querySelector('.send-btn').onclick = () => {
+            alert("Application has been sent to Erablox team!");
+            window.location.href = 'home.html';
+        };
+    </script>
+</body>
+  </html>
+  
