@@ -16,5 +16,5 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_ACCESS }}'
           channelId: live
-          projectId: erablox # Убедись, что ID проекта в Firebase именно такой
+          projectId: erablox0 # Убедись, что ID проекта в Firebase именно такой
           
