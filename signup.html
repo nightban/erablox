@@ -128,7 +128,7 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, password);
                 
                 // Сохраняем ник в базу Firestore
-                await setDoc(doc(db, "ErabloxUsers", userCredential.user.uid), {
+                await setDoc(doc(db, "(default)", userCredential.user.uid), {
                     username: username,
                     createdAt: new Date()
                 });
