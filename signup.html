@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Erablox - Repowering Imagination</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Source Sans Pro', sans-serif; overflow-x: hidden; margin: 0; }
+        
+        /* Background - You can change this URL to your own image */
+        .landing-bg { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://tr.rbxcdn.com/f04dc2542a2080a294a282431665a3c2/150/150/Image/Png') center/cover; 
+            z-index: 0; 
+        }
+
+        .landing-navbar { position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(0,0,0,0.7); padding: 12px 16px; display: flex; align-items: center; }
+        .landing-content { position: relative; z-index: 10; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; min-height: 100vh; padding-top: 60px; }
+
+        .signup-panel { background: rgba(245,245,245,0.98); padding: 30px; border-radius: 8px; width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin: 20px; }
+        .custom-btn-primary { background-color: #8A5149; border: none; color: white; padding: 10px; text-transform: uppercase; }
+        .custom-btn-primary:hover { background-color: #6d3f39; color: white; }
+
+        /* Modal Overlay */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); 
+            z-index: 200; display: none; align-items: center; justify-content: center; 
+        }
+        .login-modal-card { background: #f5f5f5; padding: 30px; border-radius: 8px; width: 350px; position: relative; border: 1px solid #ccc; }
+        .close-btn { position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 24px; border: none; background: none; color: #888; }
+        
+        .footer-text { position: fixed; bottom: 0; width: 100%; color: rgba(255,255,255,0.6); font-size: 11px; text-align: center; padding: 10px; z-index: 50; }
+    </style>
+</head>
+<body>
+    <div class="landing-bg"></div>
+
+    <nav class="landing-navbar">
+        <span style="color: white; font-weight: 900; font-size: 24px; letter-spacing: -1px;">ERABLOX</span>
+        <button id="openLogin" class="btn btn-sm custom-btn-primary fw-bold ms-auto">LOG IN</button>
+    </nav>
+
+    <div class="landing-content">
+        <div class="text-center text-white me-lg-5 mb-4">
+            <h1 style="font-weight: 900; font-size: 64px; letter-spacing: -2px;">ERABLOX</h1>
+            <div class="bg-dark bg-opacity-50 p-2 fs-4" style="letter-spacing: 1px;">Repowering Imagination™</div>
+        </div>
+
+        <div class="signup-panel">
+            <h2 class="fs-5 fw-bold text-center mb-4 text-dark">SIGN UP</h2>
+            <input type="text" id="regUser" class="form-control mb-2" placeholder="Username">
+            <input type="password" id="regPass" class="form-control mb-3" placeholder="Password">
+            <button id="btnSignup" class="btn w-100 fw-bold custom-btn-primary">PLAY</button>
+            <p class="text-center mt-3" style="font-size: 11px; color: #777;">
+                By signing up, you agree to the Erablox Terms of Service and Privacy Policy.
+            </p>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal-overlay">
+        <div class="login-modal-card">
+            <button class="close-btn" id="closeLogin">&times;</button>
+            <h4 class="text-center fw-bold mb-4 text-dark">LOG IN</h4>
+            <input type="text" id="logUser" class="form-control mb-2" placeholder="Username">
+            <input type="password" id="logPass" class="form-control mb-4" placeholder="Password">
+            <button id="btnLogin" class="btn w-100 fw-bold custom-btn-primary">LOGIN</button>
+            <div class="text-center mt-3">
+                <a href="#" style="font-size: 12px; color: #8A5149; text-decoration: none;">Forgot Password?</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-text">
+        &copy; 2026 Erablox. Not affiliated with Roblox Corporation.
+    </div>
+
+    <script type="module">
+        import { auth, db } from "./auth.js";
+        import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
+
+        const modal = document.getElementById('loginModal');
+        const openBtn = document.getElementById('openLogin');
+        const closeBtn = document.getElementById('closeLogin');
+
+        // Modal Controls
+        openBtn.onclick = () => modal.style.display = 'flex';
+        closeBtn.onclick = () => modal.style.display = 'none';
+        window.onclick = (event) => { if (event.target == modal) modal.style.display = 'none'; }
+
+        // Signup Logic
+        document.getElementById('btnSignup').onclick = async () => {
+            const user = document.getElementById('regUser').value;
+            const pass = document.getElementById('regPass').value;
+            if(!user || !pass) return alert("Please fill in all fields");
+
+            try {
+                await createUserWithEmailAndPassword(auth, user + "@erablox.com", pass);
+                window.location.href = "/home.html";
+            } catch (e) { alert("Error: " + e.message); }
+        };
+
+        // Login Logic
+        document.getElementById('btnLogin').onclick = async () => {
+            const user = document.getElementById('logUser').value;
+            const pass = document.getElementById('logPass').value;
+            try {
+                await signInWithEmailAndPassword(auth, user + "@erablox.com", pass);
+                window.location.href = "/home.html";
+            } catch (e) { alert("Login failed! Check your credentials."); }
+        };
+    </script>
+</body>
+</html>
