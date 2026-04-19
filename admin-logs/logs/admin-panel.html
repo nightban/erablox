@@ -249,7 +249,7 @@
 
         // Открыть окно информации
         function openModal(docId) {
-            db.collection("applications").doc(docId).get().then((doc) => {
+            db.collection("Review").doc(docId).get().then((doc) => {
                 if (doc.exists) {
                     const data = doc.data();
                     // Заполняем поля из Firebase
