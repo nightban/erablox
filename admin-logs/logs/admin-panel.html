@@ -5,204 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Erablox Admin Panel</title>
     
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <style>
-        /* Основные стили страницы */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        body { margin: 0; padding: 0; font-family: sans-serif; background-color: #f0f0f0; display: flex; flex-direction: column; align-items: center; }
+        .header { background-color: #4A4AFF; width: 100%; padding: 25px 0; text-align: center; color: #000; font-size: 32px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .content { display: flex; flex-wrap: wrap; justify-content: center; padding: 20px; gap: 20px; width: 100%; }
+        
+        /* Карточки из макета */
+        .card { background: #fff; border: 2px solid #000; border-radius: 20px; padding: 20px; width: 260px; text-align: center; box-shadow: 5px 5px 0px #000; }
+        .card-id { font-size: 42px; font-weight: bold; margin-bottom: 10px; }
+        .view-link { display: block; margin: 15px 0; font-size: 18px; color: #333; cursor: pointer; text-decoration: underline; }
+        .actions { display: flex; justify-content: space-around; margin-top: 15px; }
+        .btn-action { width: 80px; height: 50px; border-radius: 12px; border: none; cursor: pointer; font-size: 24px; display: flex; align-items: center; justify-content: center; }
+        .btn-approve { background-color: #32CD32; color: #fff; }
+        .btn-reject { background-color: #FF4D4D; color: #fff; }
 
-        /* Синяя шапка "Admin Panel" как на твоем макете */
-        .header {
-            background-color: #4A4AFF;
-            width: 100%;
-            padding: 25px 0;
-            text-align: center;
-            color: #000000;
-            font-size: 36px;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+        /* Тёмное окно Information */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #050510; display: none; flex-direction: column; color: white; z-index: 1000; padding: 20px; box-sizing: border-box; }
+        .modal-header { display: flex; align-items: center; margin-bottom: 40px; }
+        .menu-btn { border: 2px solid white; border-radius: 8px; padding: 5px 10px; font-size: 24px; background: none; color: white; }
+        .modal-title { flex-grow: 1; text-align: center; font-size: 32px; }
+        .info-row { display: flex; align-items: center; margin-bottom: 25px; width: 100%; max-width: 450px; align-self: center; }
+        .info-num { font-size: 50px; font-weight: bold; margin-right: 20px; min-width: 50px; color: #fff; }
+        .info-field { background-color: white; color: black; border: none; border-radius: 12px; padding: 15px; font-size: 20px; width: 100%; }
+        .btn-back { background-color: #88B08B; color: white; border: none; border-radius: 12px; padding: 15px 60px; font-size: 28px; align-self: center; margin-top: auto; margin-bottom: 30px; cursor: pointer; }
 
-        /* Сетка для карточек */
-        .content {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 20px;
-            gap: 20px;
-        }
-
-        /* Белая карточка заявки */
-        .card {
-            background: #fff;
-            border: 2px solid #000;
-            border-radius: 20px;
-            padding: 25px;
-            width: 280px;
-            text-align: center;
-            box-shadow: 4px 4px 0px #000;
-        }
-
-        .card-id {
-            font-size: 48px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .view-link {
-            display: block;
-            margin: 15px 0;
-            font-size: 20px;
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-            line-height: 1.2;
-        }
-
-        /* Кнопки Галочка и Крестик */
-        .actions {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
-
-        .btn-action {
-            width: 90px;
-            height: 55px;
-            border-radius: 15px;
-            border: none;
-            cursor: pointer;
-            font-size: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.1s;
-        }
-
-        .btn-action:active { transform: scale(0.9); }
-
-        .btn-approve { background-color: #32CD32; color: #004d00; }
-        .btn-reject { background-color: #FF4D4D; color: #4d0000; }
-
-        /* --- Темное окно Information (Modal) --- */
-        .modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #050510; /* Темный фон из скрина */
-            display: none; /* Скрыто по умолчанию */
-            flex-direction: column;
-            color: white;
-            z-index: 1000;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 50px;
-        }
-
-        .menu-btn {
-            border: 3px solid white;
-            border-radius: 10px;
-            padding: 5px 12px;
-            font-size: 30px;
-            background: none;
-            color: white;
-        }
-
-        .modal-title {
-            flex-grow: 1;
-            text-align: center;
-            font-size: 40px;
-            font-weight: normal;
-        }
-
-        /* Поля ввода в темной теме */
-        .info-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
-            width: 100%;
-            max-width: 500px;
-            align-self: center;
-        }
-
-        .info-number {
-            font-size: 60px;
-            font-weight: bold;
-            margin-right: 25px;
-            min-width: 60px;
-        }
-
-        .info-field {
-            background-color: white;
-            color: black;
-            border: none;
-            border-radius: 15px;
-            padding: 18px;
-            font-size: 24px;
-            width: 100%;
-        }
-
-        /* Кнопка Back */
-        .btn-back {
-            background-color: #88B08B; /* Зеленоватый цвет со скрина */
-            color: white;
-            border: none;
-            border-radius: 15px;
-            padding: 15px 80px;
-            font-size: 36px;
-            align-self: center;
-            margin-top: auto;
-            margin-bottom: 40px;
-            cursor: pointer;
-        }
+        /* Стиль для ошибок */
+        #error-display { color: red; font-weight: bold; text-align: center; padding: 10px; }
     </style>
 </head>
 <body>
 
     <div class="header">Admin Panel</div>
-
+    <div id="error-display"></div>
     <div class="content" id="apps-list">
-        </div>
+        <p>Загрузка данных из Firebase...</p>
+    </div>
 
     <div class="modal" id="info-modal">
         <div class="modal-header">
             <button class="menu-btn">☰</button>
             <div class="modal-title">Information</div>
         </div>
-
         <div style="display: flex; flex-direction: column; align-items: center;">
-            <div class="info-row">
-                <span class="info-number">1.</span>
-                <input type="text" id="modal-field-1" class="info-field">
-            </div>
-            <div class="info-row">
-                <span class="info-number">2.</span>
-                <input type="text" id="modal-field-2" class="info-field">
-            </div>
-            <div class="info-row">
-                <span class="info-number">3.</span>
-                <input type="text" id="modal-field-3" class="info-field">
-            </div>
+            <div class="info-row"><span class="info-num">1.</span><input type="text" id="field-1" class="info-field"></div>
+            <div class="info-row"><span class="info-num">2.</span><input type="text" id="field-2" class="info-field"></div>
+            <div class="info-row"><span class="info-num">3.</span><input type="text" id="field-3" class="info-field"></div>
         </div>
-
         <button class="btn-back" onclick="closeModal()">Back ⬅</button>
     </div>
 
     <script>
-        // ТВОЙ КОНФИГ FIREBASE
+        // Твой конфиг (проверен)
         const firebaseConfig = {
           apiKey: "AIzaSyDZAjauAbq0tsLh1EZtaUp8-O9wbZmX4A8",
           authDomain: "erablox0.firebaseapp.com",
@@ -214,66 +70,68 @@
         };
 
         // Инициализация
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const db = firebase.firestore();
+        const errDisp = document.getElementById('error-display');
 
-        // Функция загрузки данных
+        // Слушаем коллекцию Review (регистр важен!)
         function startListening() {
-            const container = document.getElementById('apps-list');
+            const list = document.getElementById('apps-list');
+            
+            db.collection("Review").onSnapshot((snapshot) => {
+                list.innerHTML = "";
+                errDisp.innerHTML = ""; // Чистим ошибки при успехе
 
-            // Слушаем коллекцию "applications" (или смени на "users", если надо)
-            db.collection("applications").onSnapshot((snapshot) => {
-                container.innerHTML = ""; // Чистим перед обновлением
+                if (snapshot.empty) {
+                    list.innerHTML = "<p>В коллекции 'Review' пока нет документов.</p>";
+                    return;
+                }
 
                 snapshot.forEach((doc) => {
-                    const data = doc.data();
                     const id = doc.id;
-
-                    // Создаем карточку
                     const card = document.createElement('div');
                     card.className = 'card';
                     card.innerHTML = `
                         <div class="card-id">id-${id.substring(0,2)}</div>
-                        <div class="view-link" onclick="openModal('${id}')">
-                            Click to view<br>information
-                        </div>
+                        <div class="view-link" onclick="openModal('${id}')">Click to view<br>information</div>
                         <div class="actions">
-                            <button class="btn-action btn-approve" onclick="approveApp('${id}')">✔</button>
-                            <button class="btn-action btn-reject" onclick="rejectApp('${id}')">✖</button>
+                            <button class="btn-action btn-approve" onclick="approve('${id}')">✔</button>
+                            <button class="btn-action btn-reject" onclick="reject('${id}')">✖</button>
                         </div>
                     `;
-                    container.appendChild(card);
+                    list.appendChild(card);
                 });
+            }, (error) => {
+                console.error(error);
+                errDisp.innerHTML = "ОШИБКА: " + error.message;
+                list.innerHTML = "Не удалось загрузить данные.";
             });
         }
 
-        // Открыть окно информации
         function openModal(docId) {
             db.collection("Review").doc(docId).get().then((doc) => {
                 if (doc.exists) {
                     const data = doc.data();
-                    // Заполняем поля из Firebase
-                    document.getElementById('modal-field-1').value = data.username || "Ник пуст";
-                    document.getElementById('modal-field-2').value = data.robloxLink || "Ссылки нет";
-                    document.getElementById('modal-field-3').value = "ID: " + docId.substring(0,5);
-                    
+                    // Эти ключи (username, robloxLink) должны совпадать с тем, что в базе!
+                    document.getElementById('field-1').value = data.username || "Нет данных";
+                    document.getElementById('field-2').value = data.robloxLink || "Нет ссылки";
+                    document.getElementById('field-3').value = "ID: " + docId.substring(0,6);
                     document.getElementById('info-modal').style.display = 'flex';
                 }
-            });
+            }).catch(e => alert("Ошибка модалки: " + e.message));
         }
 
-        // Закрыть окно информации
-        function closeModal() {
-            document.getElementById('info-modal').style.display = 'none';
+        function closeModal() { document.getElementById('info-modal').style.display = 'none'; }
+        function approve(id) { alert("Одобрено: " + id); }
+        function reject(id) { 
+            if(confirm("Удалить заявку?")) {
+                db.collection("Review").doc(id).delete();
+            }
         }
 
-        // Одобрить (просто алерт для теста)
-        function approveApp(id) {
-            alert("Пользователь " + id + " одобрен!");
-        }
-
-        // Отклонить (удалить из базы)
-        function rejectApp(id) {
-            if(confirm("Удалить заявку навсегда?")) {
-                db
-      
+        startListening();
+    </script>
+</body>
+</html>
